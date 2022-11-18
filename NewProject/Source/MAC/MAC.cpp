@@ -48,19 +48,35 @@ void MAC::main_thread()
     for (;;)
     {
         //std::this_thread::sleep_for(std::chrono::milliseconds(2));
-        receive_flag = false;
+        int rbsize,sbsize;
         {
             const ScopedLock sl(rblock);
-            if (receive_buffer.size() > 0)
-            {
-                receive_flag = true;
-                frame = receive_buffer[0];
-                receive_buffer.removeRange(0, 1);
-            }
+            rbsize = receive_buffer.size();
+            sbsize = send_buffer.size();
         }
+
+        if(rbsize==0)//Nothing, Tx mode
+        {
+            receive_flag = false;
+        }
+        else if (rand()%10<2) // Randomly reply something with probability 0.2
+        {
+            receive_flag = false;
+        }
+        else
+        {
+            receive_flag = true;
+        }
+
         if (receive_flag)// Rx mode
         {
             //cout << "Rx\n";
+            {
+                const ScopedLock sl(rblock);
+                frame = receive_buffer[0];
+                receive_buffer.removeRange(0, 1);
+            }
+            
             switch (frame.getType())
             {
             case TYPE_ACK:
@@ -114,6 +130,7 @@ void MAC::main_thread()
         }
         else // Tx mode
         {
+            //continue;
             //cout << "Tx\n";
             if (success_sending == current_sending)
             {
