@@ -66,9 +66,9 @@ void MAC::main_thread()
         }
         else
         {
-            receive_flag = true;
+            receive_flag = true; //Rx mode
         }
-        if (sbsize == 0)receive_flag = true;
+        
 
         //Mode process
         if (receive_flag)// Rx mode
