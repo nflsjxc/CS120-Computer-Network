@@ -22,7 +22,7 @@
 #define IP_PORT_LEN 48
 
 #define MAX_RESEND_TIME 100
-#define MAX_WAITING_TIME 1500
+#define MAX_WAITING_TIME 150
 
 //Phy frame
 #define AUDIO_BUFFER_SIZE (1000) // Allow 1000 frames waiting to be played
