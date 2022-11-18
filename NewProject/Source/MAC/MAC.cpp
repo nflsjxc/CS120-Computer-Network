@@ -55,6 +55,7 @@ void MAC::main_thread()
             sbsize = send_buffer.size();
         }
 
+        //Decide mode
         if(rbsize==0)//Nothing, Tx mode
         {
             receive_flag = false;
@@ -67,7 +68,9 @@ void MAC::main_thread()
         {
             receive_flag = true;
         }
+        if (sbsize == 0)receive_flag = true;
 
+        //Mode process
         if (receive_flag)// Rx mode
         {
             //cout << "Rx\n";
