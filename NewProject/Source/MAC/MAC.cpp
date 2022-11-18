@@ -60,7 +60,7 @@ void MAC::main_thread()
         {
             receive_flag = false;
         }
-        else if (rand()%10<2) // Randomly reply something with probability 0.2
+        else if (rand()%10<3) // Randomly reply something with probability 0.3
         {
             receive_flag = false;
         }
