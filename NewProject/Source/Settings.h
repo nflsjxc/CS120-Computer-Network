@@ -35,7 +35,7 @@
 #define DST_ADDR (0x10) //Address of target machine
 
 //Buffer option
-#define MAX_BUFFER_SIZE (1000)
+#define MAX_BUFFER_SIZE (10000)
 
 //Debug option
 #define DETAIL_FLAG (0)

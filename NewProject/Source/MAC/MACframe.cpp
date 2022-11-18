@@ -46,7 +46,7 @@ MACframe::MACframe(Array<int8_t> all_data) : crc() {
         //translateAddrPort();
         if (frame_crc != crc.getCRC())
         {
-            std::cout << (int)frame_crc << ' ' << (int)crc.getCRC()<<'\n';
+            //std::cout << "Should CRC: "<<(int)frame_crc << ' ' <<"Cur CRC: "<< (int)crc.getCRC() << '\n';
             bad_crc = 1;
         }
             

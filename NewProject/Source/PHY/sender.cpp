@@ -95,26 +95,18 @@ void Sender::sendOnePacket(int frame_len, Array<int8_t> cur_frame_data) {
     Array<float> audio;
     audio.addArray(header_wave, header_len);
     audio.addArray(frame_wave, frame_len * num_samples_per_bit);
+    audio.resize(512);
     //audio.addArray(zeros, len_zeros);
 
     //?
-    while (audio.size() != 512)audio.add(0);
+    //while (audio.size() != 512)audio.add(0);
 
-    if (DETAIL_FLAG) { std::cout << "Sender audio sz: " << audio.size() << '\n'; }
+    //{ std::cout << "Sender audio sz: " << audio.size() << '\n'; }
 
     {
         const ScopedLock sl(lock);
         if (buffer.size() < AUDIO_BUFFER_SIZE)buffer.add(audio);   
     }
-    
-    /*buffer.write(header_wave, header_len);
-    buffer.write(frame_wave, frame_len * num_samples_per_bit);
-    buffer.write(zeros, len_zeros);*/
-   /* output_buffer.write(header_wave, header_len);
-    output_buffer.write(frame_wave, frame_len * num_samples_per_bit);
-    output_buffer.write(zeros, len_zeros);*/
-    //output_buffer.write(startup_wave, 30);
-    //output_buffer.write(zeros, len_zeros); output_buffer.write(zeros, len_zeros); output_buffer.write(zeros, len_zeros); output_buffer.write(zeros, len_zeros);
 }
 
 int Sender::startSend() {
@@ -133,7 +125,7 @@ int Sender::startSend() {
 void Sender::audioDeviceIOCallback(const float** inputChannelData, int numInputChannels,
     float** outputChannelData, int numOutputChannels, int numSamples)
 {
-    const ScopedLock sl1(lock);
+    
     
   /*  Array<float> Data;
     Data.resize(numSamples);*/
@@ -163,10 +155,17 @@ void Sender::audioDeviceIOCallback(const float** inputChannelData, int numInputC
             {
                 outputChannelData[i][504+k] = zeros[k];
             }*/
-
-            if (buffer.size() > 0)
+            bool buffer_flag;
             {
+                const ScopedLock sl1(lock);
+                buffer_flag= buffer.size() > 0 ? 1 : 0;
+            }
+            
+            if (buffer_flag)
+            {
+                const ScopedLock sl1(lock);
                 //std::cout << "Success\n";
+                
                 memcpy(outputChannelData[i], buffer[0].data(), sizeof(float) * numSamples);
                 buffer.removeRange(0, 1);
             }
@@ -175,28 +174,6 @@ void Sender::audioDeviceIOCallback(const float** inputChannelData, int numInputC
                 //std::cout << "Empty\n";
                 zeromem(outputChannelData[i], numSamples * sizeof(float));
             }
-
-            /*for (int j = 0; j < numSamples; j++)
-            {
-                outputChannelData[i][j] = buffer.get();
-                buffer.pop();
-            }*/
-
-            /*for (int j = 0; j < numSamples; j++)
-            {
-                outputChannelData[i][j];
-                cout << outputChannelData[i][j] << '\n';
-            }*/
-
-          /*  if (output_buffer.hasEnoughElem(numSamples))
-            {
-                output_buffer.read(outputChannelData[i], numSamples);
-            }
-            else {
-                output_buffer.read(outputChannelData[i], output_buffer.size());
-                for (int j = output_buffer.size(); j < numSamples; j++)
-                    outputChannelData[i][j] = 0;
-            }*/
         }
     }
 }

@@ -1,5 +1,14 @@
 #include "MAC.h"
 
+void ArrayOutput(Array<int8_t> fdata)
+{
+    /*for (int i = 0; i < fdata.size(); i++)
+    {
+        cout << (int)fdata[i] << ' ';
+    }
+    cout << '\n';*/
+}
+
 MAC::MAC(AudioDeviceManager* dev_manager)
 {
     nbpf = 144; //50 byte
@@ -31,13 +40,14 @@ void MAC::main_thread()
     MACframe frame;
     int current_sending = -1;
     int success_sending = -1;
+    int total_sent = 0;
     int idx;
     int srcadd, dstadd;
     Array<int8_t> payload;
     std::chrono::system_clock::time_point lstsendtime;
     for (;;)
     {
-        std::this_thread::sleep_for(std::chrono::milliseconds(10));
+        //std::this_thread::sleep_for(std::chrono::milliseconds(2));
         receive_flag = false;
         {
             const ScopedLock sl(rblock);
@@ -58,13 +68,9 @@ void MAC::main_thread()
                 idx = frame.getFrame_id();//For received frame this is ack
                 cout << "Receive ACK frame! " << idx << "\n";
                 auto fdata = frame.getData();
-                for (int i = 0; i < fdata.size(); i++)
-                {
-                    cout << (int)fdata[i] << ' ';
-                }
-                cout << endl;
+                ArrayOutput(fdata);
 
-                if (success_sending == idx - 1)
+                if ((success_sending+120)%120 == (idx + 120 - 1)%120)
                 {
                     success_sending = idx;
                 }
@@ -76,30 +82,22 @@ void MAC::main_thread()
                 idx = frame.getFrame_id();
                 if (frame.isBadCRC()) {
                     // Receive a wrong frame. Go back to Frame_Detection
-                    cout << "Receive BAD DATA frame! "<<idx<<'\n';
-                    auto fdata = frame.getData();
-                    for (int i = 0; i < fdata.size(); i++)
-                    {
-                        cout << (int)fdata[i] << ' ';
-                    }
-                    cout << endl;
+                    cout << "Receive BAD DATA frame "<<idx<<'\n';
+                    ArrayOutput(frame.getData());
                     break;
                 }
                 else
                 {
-                    cout << "Receive corret DATA frame! " <<idx<< "\n";
-                    auto fdata = frame.getData();
-                    for (int i = 0; i < fdata.size(); i++)
-                    {
-                        cout << (int)fdata[i] << ' ';
-                    }
-                    cout << endl;
+                    cout << "Receive corret DATA frame " <<idx<< "\n";
+                    Array<int8_t> fdata = frame.getData();
+                    ArrayOutput(fdata);
 
-                    //Reply ACK (TxACK)
+                    //Reply ACK (TxACK state)
                     MACframe ack(frame.getSrcAddr(), frame.getDstAddr(), frame.getFrame_id());
+                    cout << "Reply ACK " << (int)frame.getFrame_id() << '\n';
                     /*ack.setFrameId(frame.getFrame_id());*/
                     {
-                        cout << "Reply ACK " << (int)frame.getFrame_id() << '\n';
+                        
                         const ScopedLock sl(sblock);
                         if (send_buffer.size() <= MAX_BUFFER_SIZE)
                         {
@@ -119,21 +117,20 @@ void MAC::main_thread()
             //cout << "Tx\n";
             if (success_sending == current_sending)
             {
-                current_sending++;
-                
+                current_sending++; total_sent++;
+                current_sending %= 120;
+                cout << "\n####      TOTAL sent: " << total_sent << "          ####\n\n";
+                //payload are real data in bytes
                 payload.clear();
                 for (int i = 1; i <= 13; i++)
                 {
                     payload.add(current_sending*13+i);
                 }
-                for (int i = 0; i < payload.size(); i++)
-                {
-                    cout << (int)payload[i] << ' ';
-                }
-                cout << endl;
+
                 MACframe fpayload(DST_ADDR, SRC_ADDR, payload);
-                cout << "Sending DATA " << (int)fpayload.getFrame_id() << '\n';
-                cout << (int)fpayload.crc_int8 << '\n';
+ //               cout << "Sending DATA " << (int)fpayload.getFrame_id() << '\n';
+ //               ArrayOutput(payload);
+                //cout << (int)fpayload.crc_int8 << '\n';
                 fpayload.setFrameId(current_sending);
                 {
                     const ScopedLock sl(sblock);
@@ -158,7 +155,8 @@ void MAC::main_thread()
                     MACframe fpayload(DST_ADDR, SRC_ADDR, payload);
                     fpayload.setFrameId(current_sending);
                     cout << "TIMEOUT resend DATA " << current_sending << '\n';
-                    cout <<(int) fpayload.crc_int8<<'\n';
+                    ArrayOutput(fpayload.getData());
+                    //cout <<(int) fpayload.crc_int8<<'\n';
                     {
                         const ScopedLock sl(sblock);
                         if (send_buffer.size() <= MAX_BUFFER_SIZE)
@@ -193,7 +191,7 @@ void MAC::send() //size data should be the frame_len (144 0/1)
         //cout << "Sender: " << "Send one packet, size: " << frame.getFrame_size() + FRAME_OFFSET << "\n";
         se->sendOnePacket(frame.getFrame_size() + FRAME_OFFSET, frame.toBitStream());
         //se->sendOnePacket(frame_len, data);
-        std::this_thread::sleep_for(chrono::milliseconds(5));// Is it necessary?
+        //std::this_thread::sleep_for(chrono::milliseconds(5));// Is it necessary?
     }
 
 }
