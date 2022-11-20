@@ -75,9 +75,9 @@ using namespace std;
 //    dev_manager->removeAudioCallback(re.get()); 
 //}
 
-void mac_init(MAC &test)
+void mac_init(MAC* test)
 {
-    test.main_thread();
+    test->main_thread();
 }
 
 //==============================================================================
@@ -93,7 +93,7 @@ int main (int argc, char* argv[])
     dev_info.bufferSize = 512;
     dev_manager.setAudioDeviceSetup(dev_info, false);
 
-    string datap = R"(C:\Users\Cabbage\Desktop\Network-debug\Data\INPUT.txt)";
+    string datap = R"(C:\Users\Cabbage\Desktop\Network-debug\Data\input_t.txt)";
     string okp= R"(C:\Users\Cabbage\Desktop\Network-debug\Data\ok.txt)";
     //filesystem::path datapath(datap);
     //dataloader load(datapath.string());
@@ -119,6 +119,15 @@ int main (int argc, char* argv[])
         }
     }
     mac_thread.join();
+
+    //for (int i = 0; i < datar.data.size(); i++)
+    //{
+    //    for (int j = 0; j < datar.data[i].size(); j++)
+    //    {
+    //        cout << datar.data[i][j] << ' ';
+    //    }
+    //    cout << '\n';
+    //}
     
 
     /*thread send_thread(&send, &dev_manager);

@@ -100,6 +100,7 @@ void MAC::main_thread()
                 if ((success_sending+120)%120 == (idx + 120 - 1)%120)
                 {
                     success_sending = idx;
+                    dl->pop13bytes(); // get next 13 bytes to send
                 }
                 break;
             }
@@ -155,7 +156,7 @@ void MAC::main_thread()
                     payload.add(current_sending*13+i);
                 }*/
 
-                dl->pop13bytes();
+                
                 if (dl->isempty())//No message, continue
                 {
                     continue;
