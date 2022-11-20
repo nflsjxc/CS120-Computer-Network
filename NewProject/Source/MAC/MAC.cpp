@@ -188,6 +188,10 @@ void MAC::main_thread()
                         payload.add(current_sending * 13 + i);
                     }*/
 
+                    if (dl->isempty())//No message, continue
+                    {
+                        continue;
+                    }
                     payload = dl->getcur13bytes();
                     MACframe fpayload(DST_ADDR, SRC_ADDR, payload);
                     fpayload.setFrameId(current_sending);

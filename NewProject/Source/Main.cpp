@@ -104,12 +104,12 @@ int main (int argc, char* argv[])
 
     dataloader datal;
     datareceiver datar;
-    
+    cout << datal.isempty() << '\n';
     Message_Listener msgl(&datal);
-    msgl.addData(okp, datap);
+    //msgl.addData(okp, datap);
     MAC test(&dev_manager);
     test.dl = &datal; test.dr = &datar;
-
+    cout << test.dl->isempty() << '\n';
     thread mac_thread(mac_init, &test);
     for (;;)
     {
@@ -120,14 +120,14 @@ int main (int argc, char* argv[])
     }
     mac_thread.join();
 
-    //for (int i = 0; i < datar.data.size(); i++)
-    //{
-    //    for (int j = 0; j < datar.data[i].size(); j++)
-    //    {
-    //        cout << datar.data[i][j] << ' ';
-    //    }
-    //    cout << '\n';
-    //}
+    for (int i = 0; i < datar.data.size(); i++)
+    {
+        for (int j = 0; j < datar.data[i].size(); j++)
+        {
+            cout << datar.data[i][j] << ' ';
+        }
+        cout << '\n';
+    }
     
 
     /*thread send_thread(&send, &dev_manager);
