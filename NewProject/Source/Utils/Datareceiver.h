@@ -18,6 +18,7 @@ public:
 	Array<int8_t> get13bytes();
 	void pop13bytes();
 	Array<int8_t> zero13;
+	bool receiveAll();
 };
 
 #endif

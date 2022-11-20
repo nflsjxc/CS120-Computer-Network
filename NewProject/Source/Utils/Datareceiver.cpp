@@ -25,3 +25,18 @@ void datareceiver::add13bytes(Array<int8_t> newdata)
 	const ScopedLock sl(lock);
 	data.add(newdata);
 }
+
+bool datareceiver::receiveAll() {
+	// If a package received, it should end with 13 zeros.
+	const ScopedLock sl(lock);
+	int n = data.size() - 1;
+	if (n < 0) {
+		return false;
+	}
+	for (int i = 0; i < 13; ++i) {
+		if (data[n][i] != 0) {
+			return false;
+		}
+	}
+	return true;
+}
