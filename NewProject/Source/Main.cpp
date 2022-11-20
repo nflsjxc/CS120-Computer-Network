@@ -113,7 +113,9 @@ int main (int argc, char* argv[])
     thread mac_thread(mac_init, &test);
     for (;;)
     {
-        //this_thread::sleep_for(chrono::milliseconds(50));
+
+        this_thread::sleep_for(chrono::milliseconds(50));
+        msgl.addIcmpRequest();
         //cout << datal.isfinish() << '\n';
         if (datal.isfinish())
         {
@@ -124,11 +126,6 @@ int main (int argc, char* argv[])
         if (datar.receiveAll())
         {
             this_thread::sleep_for(chrono::milliseconds(20));
-            test.update_status(1);
-            break;
-        }
-        if (datar.receiveAll())
-        {
             test.update_status(1);
             break;
         }

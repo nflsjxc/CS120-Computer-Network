@@ -12,6 +12,7 @@ bool Message_Listener::isExist(std::string filePath) {
 
 void Message_Listener::addData(std::string okPath, std::string dataPath)
 {
+	
 	allData.clear();
 	if (!isExist(okPath)) {
 		return;
@@ -41,10 +42,22 @@ void Message_Listener::addData(std::string okPath, std::string dataPath)
 			Dataloader->add13bytes(tmp);
 		}
 	}
+}
+
+void Message_Listener::addIcmpRequest() 
+{
+	Array<int8_t> tmp;
+	for (int i = 0; i < 13; ++i) {
+		tmp.add(1);
+	}
+	Dataloader->add13bytes(tmp);
+}	
+
+void Message_Listener::addEndRequest() {
 	// Add 13 zeros to represents end.
-	tmp.clear();
+	Array<int8_t> tmp;
 	for (int i = 0; i < 13; ++i) {
 		tmp.add(0);
 	}
-	Dataloader->add13bytes(tmp); 
+	Dataloader->add13bytes(tmp);
 }

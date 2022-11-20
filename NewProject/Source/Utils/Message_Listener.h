@@ -13,6 +13,10 @@ public:
 
 	void addData(std::string okPath, std::string dataPath);
 
+	void addIcmpRequest();
+
+	void addEndRequest();
+
 	bool isExist(std::string filePath);
 
 private:

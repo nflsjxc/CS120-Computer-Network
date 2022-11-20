@@ -52,7 +52,7 @@ void dataloader::pop13bytes()
 	data.removeRange(0, 1);
 	if (data.size() == 0)
 	{
-		cout << "Zeroed\n";
+		//cout << "Zeroed\n";
 		finish = true;
 		return;
 	}
