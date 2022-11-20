@@ -3,11 +3,11 @@
 
 void ArrayOutput(Array<int8_t> fdata)
 {
-    /*for (int i = 0; i < fdata.size(); i++)
+    for (int i = 0; i < fdata.size(); i++)
     {
         cout << (int)fdata[i] << ' ';
     }
-    cout << '\n';*/
+    cout << '\n';
 }
 
 void MAC::update_status(bool newstatus)
@@ -82,6 +82,7 @@ void MAC::main_thread()
         if (receive_flag)// Rx mode
         {
             //cout << "Rx\n";
+            if(rbsize)
             {
                 const ScopedLock sl(rblock);
                 frame = receive_buffer[0];
@@ -95,7 +96,7 @@ void MAC::main_thread()
                 idx = frame.getFrame_id();//For received frame this is ack
                 cout << "Receive ACK frame! " << idx << "\n";
                 auto fdata = frame.getData();
-                ArrayOutput(fdata);
+                //ArrayOutput(fdata);
 
                 if ((success_sending+120)%120 == (idx + 120 - 1)%120)
                 {
@@ -111,7 +112,7 @@ void MAC::main_thread()
                 if (frame.isBadCRC()) {
                     // Receive a wrong frame. Go back to Frame_Detection
                     cout << "Receive BAD DATA frame "<<idx<<'\n';
-                    ArrayOutput(frame.getData());
+                    //ArrayOutput(frame.getData());
                     break;
                 }
                 else
@@ -195,7 +196,7 @@ void MAC::main_thread()
                     MACframe fpayload(DST_ADDR, SRC_ADDR, payload);
                     fpayload.setFrameId(current_sending);
                     cout << "TIMEOUT resend DATA " << current_sending << '\n';
-                    ArrayOutput(fpayload.getData());
+                    //ArrayOutput(fpayload.getData());
                     //cout <<(int) fpayload.crc_int8<<'\n';
                     {
                         const ScopedLock sl(sblock);
@@ -244,6 +245,7 @@ void MAC::receive()// Receive 144 bit, 18 byte, 4 byte + 14 byte payload ?
         auto fdata = re->getData();
         //cout << "Receiver, size: " << fdata.size() << '\n';
         if (!fdata.size())continue;
+        if (re->timeout_flag)continue;
         MACframe frame(fdata);
         {
             const ScopedLock sl(rblock);

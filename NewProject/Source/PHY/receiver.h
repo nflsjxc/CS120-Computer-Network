@@ -47,6 +47,8 @@ public:
     float getChannelPower() { return power_; }
 
     float getMaxPower() { return max_power; }
+
+    bool timeout_flag;
 private:
 
     Array<float> processingHeader;

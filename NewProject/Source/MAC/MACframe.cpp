@@ -51,7 +51,7 @@ MACframe::MACframe(Array<int8_t> all_data) : crc() {
         }
             
     }
-    else if (type == TYPE_ACK || type == TYPE_MACPING_REPLY) {
+    else if (type == TYPE_ACK || type == TYPE_MACPING_REPLY ) {
         for (int i = 4; i < all_data.size(); i++)
             data.add(all_data[i]);
     }

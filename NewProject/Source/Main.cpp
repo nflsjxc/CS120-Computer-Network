@@ -114,7 +114,7 @@ int main (int argc, char* argv[])
     for (;;)
     {
         //this_thread::sleep_for(chrono::milliseconds(50));
-        cout << datal.isfinish() << '\n';
+        //cout << datal.isfinish() << '\n';
         if (datal.isfinish())
         {
             test.update_status(1);

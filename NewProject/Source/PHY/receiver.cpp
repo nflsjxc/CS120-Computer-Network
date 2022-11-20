@@ -283,10 +283,15 @@ Receiver::getData()
     //const ScopedLock sl(lock);
     data_state = SYNC;
     std::chrono::system_clock::time_point start_time = std::chrono::system_clock::now();
+    timeout_flag = false;
     while (data_state != DATA_RECEIVED)
     {
         auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now() - start_time).count();
-        if (duration >= MAX_WAITING_TIME) break;
+        if (duration >= MAX_WAITING_TIME)
+        {
+            timeout_flag = true;
+            break;
+        }
     }
     return frame_data;
 }

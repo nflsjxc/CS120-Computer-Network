@@ -9,6 +9,8 @@
 #define TYPE_MACPING_REQUEST 2
 #define TYPE_MACPING_REPLY 3
 #define TYPE_ICMP_REQUEST 4
+//Added 
+#define TYPE_CONTROL 5
 
 // Receiver mode
 #define NO_HEADER -1

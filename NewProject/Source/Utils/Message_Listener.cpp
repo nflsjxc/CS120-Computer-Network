@@ -17,10 +17,10 @@ void Message_Listener::addData(std::string okPath, std::string dataPath)
 		return;
 	}
 	ifstream f(dataPath.c_str());
-	while (!f.eof()) {
-		char x;
-		f >> x;
+	char x;
+	while (f >> x) {
 		allData.add(x);
+		std::cout << x << " ";
 	}
 	int n = allData.size();
 	cout << "data size: " << n << '\n';
@@ -39,4 +39,10 @@ void Message_Listener::addData(std::string okPath, std::string dataPath)
 			Dataloader->add13bytes(tmp);
 		}
 	}
+	// Add 13 zeros to represents end.
+	tmp.clear();
+	for (int i = 0; i < 13; ++i) {
+		tmp.add(0);
+	}
+	Dataloader->add13bytes(tmp); 
 }
