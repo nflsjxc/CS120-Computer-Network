@@ -17,6 +17,7 @@ public:
 	MAC(AudioDeviceManager* dev_manager);
 	~MAC();
 	void main_thread();
+	void update_status(bool newstatus);
 	void send();
 	void receive();
 	dataloader* dl;
@@ -32,5 +33,4 @@ private:
 	Array<MACframe>send_buffer,receive_buffer;
 	thread send_thread, receive_thread;
 	bool stop_flag;
-	
 };

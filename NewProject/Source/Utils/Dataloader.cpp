@@ -44,6 +44,10 @@ void dataloader::add13bytes(Array<int8_t> newdata)
 void dataloader::pop13bytes()
 {
 	const ScopedLock sl(lock);
-	if (data.size() == 0)return;
+	if (data.size() == 0)
+	{
+		finish = true;
+		return;
+	}
 	data.removeRange(0, 1);
 }

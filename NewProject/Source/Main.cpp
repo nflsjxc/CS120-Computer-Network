@@ -75,11 +75,8 @@ using namespace std;
 //    dev_manager->removeAudioCallback(re.get()); 
 //}
 
-void mac_init(AudioDeviceManager* dev_manager,dataloader *dl,datareceiver *dr)
+void mac_init(MAC &test)
 {
-    MAC test(dev_manager);
-    test.dl = dl;
-    test.dr = dr;
     test.main_thread();
 }
 
@@ -110,9 +107,17 @@ int main (int argc, char* argv[])
     
     Message_Listener msgl(&datal);
     msgl.addData(okp, datap);
+    MAC test(&dev_manager);
+    test.dl = &datal; test.dr = &datar;
 
-    thread mac_thread(mac_init, &dev_manager, &datal, &datar);
-
+    thread mac_thread(mac_init, &test);
+    for (;;)
+    {
+        if (datal.isfinish())
+        {
+            test.update_status(1);
+        }
+    }
     mac_thread.join();
     
 

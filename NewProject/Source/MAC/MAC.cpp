@@ -10,6 +10,11 @@ void ArrayOutput(Array<int8_t> fdata)
     cout << '\n';*/
 }
 
+void MAC::update_status(bool newstatus)
+{
+    stop_flag = newstatus;
+}
+
 MAC::MAC(AudioDeviceManager* dev_manager)
 {
     nbpf = 144; //50 byte
@@ -149,12 +154,6 @@ void MAC::main_thread()
                 {
                     payload.add(current_sending*13+i);
                 }*/
-
-                if (dl->isfinish())
-                {
-                    stop_flag = true;
-                    continue;
-                }
 
                 dl->pop13bytes();
                 if (dl->isempty())//No message, continue
