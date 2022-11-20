@@ -117,6 +117,13 @@ int main (int argc, char* argv[])
         //cout << datal.isfinish() << '\n';
         if (datal.isfinish())
         {
+            this_thread::sleep_for(chrono::milliseconds(20));
+            test.update_status(1);
+            break;
+        }
+        if (datar.receiveAll())
+        {
+            this_thread::sleep_for(chrono::milliseconds(20));
             test.update_status(1);
             break;
         }
