@@ -5,7 +5,7 @@ dataloader::dataloader()
 	const ScopedLock sl(lock);
 	finish = false;
 	for (int i = 0; i < 13; i++)zero13.add(0);
-	data.add(zero13);
+	//data.add(zero13);
 }
 
 void dataloader::status_update(bool isfinish)
@@ -50,4 +50,10 @@ void dataloader::pop13bytes()
 		return;
 	}
 	data.removeRange(0, 1);
+	if (data.size() == 0)
+	{
+		cout << "Zeroed\n";
+		finish = true;
+		return;
+	}
 }
