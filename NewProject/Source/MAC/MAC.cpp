@@ -187,7 +187,6 @@ void MAC::main_thread()
                     {
                         payload.add(current_sending * 13 + i);
                     }*/
-
                     if (dl->isempty())//No message, continue
                     {
                         continue;
@@ -210,7 +209,7 @@ void MAC::main_thread()
             }
         }
     }
-
+    cout << "Exit MAC::main_thread\n";
     send_thread.join();
     receive_thread.join();
 }
@@ -234,7 +233,7 @@ void MAC::send() //size data should be the frame_len (144 0/1)
         //se->sendOnePacket(frame_len, data);
         //std::this_thread::sleep_for(chrono::milliseconds(5));// Is it necessary?
     }
-
+    cout << "Exit MAC::send thread\n";
 }
 
 void MAC::receive()// Receive 144 bit, 18 byte, 4 byte + 14 byte payload ?
@@ -252,6 +251,7 @@ void MAC::receive()// Receive 144 bit, 18 byte, 4 byte + 14 byte payload ?
             receive_buffer.add(frame);
         }
     }
+    cout << "Exit MAC::receive thread\n";
 }
 
 /*

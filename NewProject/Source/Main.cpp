@@ -113,9 +113,12 @@ int main (int argc, char* argv[])
     thread mac_thread(mac_init, &test);
     for (;;)
     {
+        //this_thread::sleep_for(chrono::milliseconds(50));
+        cout << datal.isfinish() << '\n';
         if (datal.isfinish())
         {
             test.update_status(1);
+            break;
         }
     }
     mac_thread.join();
