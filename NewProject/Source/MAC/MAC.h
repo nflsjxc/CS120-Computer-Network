@@ -33,4 +33,5 @@ private:
 	Array<MACframe>send_buffer,receive_buffer;
 	thread send_thread, receive_thread;
 	bool stop_flag;
+	bool main_flag;
 };
