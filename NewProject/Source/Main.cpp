@@ -12,6 +12,8 @@
 #include "MACframe.h"
 #include "Selftune.hpp"
 #include "MAC.h"
+#include <filesystem>
+#include "Message_Listener.h"
 using namespace juce;
 using namespace std;
 
@@ -73,6 +75,14 @@ using namespace std;
 //    dev_manager->removeAudioCallback(re.get()); 
 //}
 
+void mac_init(AudioDeviceManager* dev_manager,dataloader *dl,datareceiver *dr)
+{
+    MAC test(dev_manager);
+    test.dl = dl;
+    test.dr = dr;
+    test.main_thread();
+}
+
 //==============================================================================
 int main (int argc, char* argv[])
 {
@@ -86,11 +96,24 @@ int main (int argc, char* argv[])
     dev_info.bufferSize = 512;
     dev_manager.setAudioDeviceSetup(dev_info, false);
 
+    string datap = R"(C:\Users\Cabbage\Desktop\Network-debug\Data\INPUT.txt)";
+    string okp= R"(C:\Users\Cabbage\Desktop\Network-debug\Data\ok.txt)";
+    //filesystem::path datapath(datap);
+    //dataloader load(datapath.string());
+
     //CriticalSection audiolock;
     //Selftune::self_tune(&dev_manager);
     getchar();
-    MAC test(&dev_manager);
-    test.main_thread();
+
+    dataloader datal;
+    datareceiver datar;
+    
+    Message_Listener msgl(&datal);
+    msgl.addData(okp, datap);
+
+    thread mac_thread(mac_init, &dev_manager, &datal, &datar);
+
+    mac_thread.join();
     
 
     /*thread send_thread(&send, &dev_manager);

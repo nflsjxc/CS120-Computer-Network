@@ -2751,6 +2751,15 @@
     <ClCompile Include="..\..\Source\MAC\MAC.cpp">
       <Filter>NewProject\Source\MAC</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Source\Utils\Dataloader.cpp">
+      <Filter>NewProject\Source\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Utils\Datareceiver.cpp">
+      <Filter>NewProject\Source\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Utils\Message_Listener.cpp">
+      <Filter>NewProject\Source\Utils</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\..\Network\JUCE\modules\juce_audio_basics\audio_play_head\juce_AudioPlayHead.h">
@@ -5436,6 +5445,15 @@
       <Filter>NewProject\Source\MAC</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Source\Utils\Selftune.hpp">
+      <Filter>NewProject\Source\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Utils\Dataloader.h">
+      <Filter>NewProject\Source\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Utils\Datareceiver.h">
+      <Filter>NewProject\Source\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Utils\Message_Listener.h">
       <Filter>NewProject\Source\Utils</Filter>
     </ClInclude>
   </ItemGroup>

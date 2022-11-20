@@ -1,4 +1,5 @@
 #include "MAC.h"
+#include "Datareceiver.h"
 
 void ArrayOutput(Array<int8_t> fdata)
 {
@@ -20,6 +21,8 @@ MAC::MAC(AudioDeviceManager* dev_manager)
     re.reset(new Receiver(nbpf, nspb));
     dev_manager->addAudioCallback(re.get());
     stop_flag = false;
+    dl = nullptr;
+    dr = nullptr;
 }
 
 MAC::~MAC() 
@@ -30,7 +33,6 @@ MAC::~MAC()
 
 void MAC::main_thread()
 {
-    //MACframe dataframe(DST_ADDR, SRC_ADDR, );
 
     re->startRecording();
 	send_thread=thread(&MAC::send,this);
@@ -47,6 +49,7 @@ void MAC::main_thread()
     std::chrono::system_clock::time_point lstsendtime;
     for (;;)
     {
+        if (stop_flag)break;
         //std::this_thread::sleep_for(std::chrono::milliseconds(2));
         int rbsize,sbsize;
         {
@@ -60,7 +63,7 @@ void MAC::main_thread()
         {
             receive_flag = false;
         }
-        else if (rand()%10<2) // Randomly reply something with probability 0.2
+        else if (rand()%10<3) // Randomly reply something with probability 0.3
         {
             receive_flag = false;
         }
@@ -110,7 +113,7 @@ void MAC::main_thread()
                     cout << "Receive corret DATA frame " <<idx<< "\n";
                     Array<int8_t> fdata = frame.getData();
                     ArrayOutput(fdata);
-
+                    dr->add13bytes(fdata); //Add receive message to dr
                     //Reply ACK (TxACK state)
                     MACframe ack(frame.getSrcAddr(), frame.getDstAddr(), frame.getFrame_id());
                     cout << "Reply ACK " << (int)frame.getFrame_id() << '\n';
@@ -141,11 +144,24 @@ void MAC::main_thread()
                 current_sending %= 120;
                 cout << "\n####      TOTAL sent: " << total_sent << "          ####\n\n";
                 //payload are real data in bytes
-                payload.clear();
+                /*payload.clear();
                 for (int i = 1; i <= 13; i++)
                 {
                     payload.add(current_sending*13+i);
+                }*/
+
+                if (dl->isfinish())
+                {
+                    stop_flag = true;
+                    continue;
                 }
+
+                dl->pop13bytes();
+                if (dl->isempty())//No message, continue
+                {
+                    continue;
+                }
+                payload = dl->getcur13bytes();//get message from dl
 
                 MACframe fpayload(DST_ADDR, SRC_ADDR, payload);
  //               cout << "Sending DATA " << (int)fpayload.getFrame_id() << '\n';
@@ -166,12 +182,13 @@ void MAC::main_thread()
                 std::chrono::duration<double, std::milli> diff = std::chrono::system_clock::now() - lstsendtime;
                 if (diff.count() > MAX_WAITING_TIME)// Timeout, resend
                 {
-                    payload.clear();
+                    /*payload.clear();
                     for (int i = 1; i <= 13; i++)
                     {
                         payload.add(current_sending * 13 + i);
-                    }
+                    }*/
 
+                    payload = dl->getcur13bytes();
                     MACframe fpayload(DST_ADDR, SRC_ADDR, payload);
                     fpayload.setFrameId(current_sending);
                     cout << "TIMEOUT resend DATA " << current_sending << '\n';
@@ -220,6 +237,7 @@ void MAC::receive()// Receive 144 bit, 18 byte, 4 byte + 14 byte payload ?
 {
     for (;;)
     {
+        if (stop_flag)break;
         auto fdata = re->getData();
         //cout << "Receiver, size: " << fdata.size() << '\n';
         if (!fdata.size())continue;

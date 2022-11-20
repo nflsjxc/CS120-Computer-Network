@@ -2275,6 +2275,9 @@
     <ClCompile Include="..\..\JuceLibraryCode\include_juce_gui_extra.cpp" />
     <ClCompile Include="..\..\Source\PHY\receiver.cpp" />
     <ClCompile Include="..\..\Source\PHY\sender.cpp" />
+    <ClCompile Include="..\..\Source\Utils\Dataloader.cpp" />
+    <ClCompile Include="..\..\Source\Utils\Datareceiver.cpp" />
+    <ClCompile Include="..\..\Source\Utils\Message_Listener.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\..\Network\JUCE\modules\juce_audio_basics\audio_play_head\juce_AudioPlayHead.h" />
@@ -3171,6 +3174,9 @@
     <ClInclude Include="..\..\Source\PHY\receiver.h" />
     <ClInclude Include="..\..\Source\PHY\sender.h" />
     <ClInclude Include="..\..\Source\Settings.h" />
+    <ClInclude Include="..\..\Source\Utils\Dataloader.h" />
+    <ClInclude Include="..\..\Source\Utils\Datareceiver.h" />
+    <ClInclude Include="..\..\Source\Utils\Message_Listener.h" />
     <ClInclude Include="..\..\Source\Utils\Selftune.hpp" />
   </ItemGroup>
   <ItemGroup>

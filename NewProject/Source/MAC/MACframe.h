@@ -4,6 +4,7 @@
 #include <chrono>
 #include "CRC8.h"
 #include "Settings.h"
+
 using namespace juce;
 /// <summary>
 /// A frame contains a header, a type, a frame_id, dst_address, src_address, data

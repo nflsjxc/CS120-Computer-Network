@@ -4,9 +4,12 @@
 #include "sender.h"
 #include "receiver.h"
 #include "MACframe.h"
+#include "Dataloader.h"
+#include "Datareceiver.h"
 
 using namespace juce;
 using namespace std;
+//extern dataloader;
 
 class MAC
 {
@@ -16,6 +19,8 @@ public:
 	void main_thread();
 	void send();
 	void receive();
+	dataloader* dl;
+	datareceiver* dr;
 private:
 	int nbpf = 144; //50 byte
 	int nspb = 3; // 5 samples per bit
@@ -27,4 +32,5 @@ private:
 	Array<MACframe>send_buffer,receive_buffer;
 	thread send_thread, receive_thread;
 	bool stop_flag;
+	
 };
