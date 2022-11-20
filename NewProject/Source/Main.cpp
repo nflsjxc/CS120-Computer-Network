@@ -106,7 +106,7 @@ int main (int argc, char* argv[])
     datareceiver datar;
     cout << datal.isempty() << '\n';
     Message_Listener msgl(&datal);
-    //msgl.addData(okp, datap);
+    msgl.addData(okp, datap);
     MAC test(&dev_manager);
     test.dl = &datal; test.dr = &datar;
     cout << test.dl->isempty() << '\n';
@@ -116,6 +116,11 @@ int main (int argc, char* argv[])
         //this_thread::sleep_for(chrono::milliseconds(50));
         //cout << datal.isfinish() << '\n';
         if (datal.isfinish())
+        {
+            test.update_status(1);
+            break;
+        }
+        if (datar.receiveAll())
         {
             test.update_status(1);
             break;

@@ -128,7 +128,7 @@ void MAC::main_thread()
                     {
                         
                         const ScopedLock sl(sblock);
-                        if (send_buffer.size() <= MAX_BUFFER_SIZE)
+                        if (send_buffer.size() <= MAX_BUFFER_SIZE&&!stop_flag)
                         {
                             send_buffer.add(ack);
                         }
@@ -171,7 +171,7 @@ void MAC::main_thread()
                 fpayload.setFrameId(current_sending);
                 {
                     const ScopedLock sl(sblock);
-                    if (send_buffer.size() <= MAX_BUFFER_SIZE)
+                    if (send_buffer.size() <= MAX_BUFFER_SIZE&&!stop_flag)
                     {
                         send_buffer.add(fpayload);
                         lstsendtime = std::chrono::system_clock::now();
@@ -200,7 +200,7 @@ void MAC::main_thread()
                     //cout <<(int) fpayload.crc_int8<<'\n';
                     {
                         const ScopedLock sl(sblock);
-                        if (send_buffer.size() <= MAX_BUFFER_SIZE)
+                        if (send_buffer.size() <= MAX_BUFFER_SIZE&&!stop_flag)
                         {
                             send_buffer.add(fpayload);
                             lstsendtime = std::chrono::system_clock::now();
@@ -220,8 +220,11 @@ void MAC::send() //size data should be the frame_len (144 0/1)
     Array<int8_t>data;
     for (;;)
     {
-        if (stop_flag)break;
-        if (send_buffer.size() == 0)continue;
+        if (send_buffer.size() == 0)
+        {
+            if (stop_flag)break;
+            continue;
+        }
         MACframe frame;
         {
             const ScopedLock sl(sblock);
