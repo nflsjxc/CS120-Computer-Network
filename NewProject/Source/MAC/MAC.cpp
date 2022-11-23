@@ -55,6 +55,7 @@ void MAC::main_thread()
     std::chrono::system_clock::time_point lstsendtime;
     for (;;)
     {
+        std::this_thread::sleep_for(std::chrono::milliseconds(5));//???
         if (stop_flag)
         {
             main_flag = true;
@@ -86,7 +87,7 @@ void MAC::main_thread()
         //Mode process
         if (receive_flag)// Rx mode
         {
-            //cout << "Rx\n";
+            //cout << "(MAC) Rx\n";
             if(rbsize)
             {
                 const ScopedLock sl(rblock);
@@ -99,7 +100,7 @@ void MAC::main_thread()
             case TYPE_ACK:
             {
                 idx = frame.getFrame_id();//For received frame this is ack
-                cout << "Receive ACK frame! " << idx << "\n";
+                cout << "(MAC) Receive ACK frame! " << idx << "\n";
                 auto fdata = frame.getData();
                 //ArrayOutput(fdata);
 
@@ -122,13 +123,13 @@ void MAC::main_thread()
                 }
                 else
                 {
-                    cout << "Receive corret DATA frame " <<idx<< "\n";
+                    cout << "(MAC) Receive corret DATA frame " <<idx<< "\n";
                     Array<int8_t> fdata = frame.getData();
-                    ArrayOutput(fdata);
+                    //ArrayOutput(fdata);
                     dr->add13bytes(fdata); //Add receive message to dr
                     //Reply ACK (TxACK state)
                     MACframe ack(frame.getSrcAddr(), frame.getDstAddr(), frame.getFrame_id());
-                    cout << "Reply ACK " << (int)frame.getFrame_id() << '\n';
+                    cout << "(MAC) Reply ACK " << (int)frame.getFrame_id() << '\n';
                     /*ack.setFrameId(frame.getFrame_id());*/
                     {
                         
@@ -154,7 +155,8 @@ void MAC::main_thread()
             {
                 current_sending++; total_sent++;
                 current_sending %= 120;
-                cout << "\n####      TOTAL sent: " << total_sent << "          ####\n\n";
+                //cout << "\n####      TOTAL sent: " << total_sent << "          ####\n\n";
+                cout << "(MAC) TOTAL sent: " << total_sent << "\n";
                 //payload are real data in bytes
                 /*payload.clear();
                 for (int i = 1; i <= 13; i++)
@@ -200,7 +202,7 @@ void MAC::main_thread()
                     payload = dl->getcur13bytes();
                     MACframe fpayload(DST_ADDR, SRC_ADDR, payload);
                     fpayload.setFrameId(current_sending);
-                    cout << "TIMEOUT resend DATA " << current_sending << '\n';
+                    cout << "(MAC) TIMEOUT resend DATA " << current_sending << '\n';
                     //ArrayOutput(fpayload.getData());
                     //cout <<(int) fpayload.crc_int8<<'\n';
                     {
@@ -215,7 +217,7 @@ void MAC::main_thread()
             }
         }
     }
-    cout << "Exit MAC::main_thread\n";
+    cout << "(MAC) Exit MAC::main_thread\n";
     send_thread.join();
     receive_thread.join();
 }
@@ -245,9 +247,9 @@ void MAC::send() //size data should be the frame_len (144 0/1)
         //cout << "Sender: " << "Send one packet, size: " << frame.getFrame_size() + FRAME_OFFSET << "\n";
         se->sendOnePacket(frame.getFrame_size() + FRAME_OFFSET, frame.toBitStream());
         //se->sendOnePacket(frame_len, data);
-        //std::this_thread::sleep_for(chrono::milliseconds(5));// Is it necessary?
+        std::this_thread::sleep_for(chrono::milliseconds(5));// Is it necessary?
     }
-    cout << "Exit MAC::send thread\n";
+    cout << "(MAC) Exit MAC::send thread\n";
 }
 
 void MAC::receive()// Receive 144 bit, 18 byte, 4 byte + 14 byte payload ?
@@ -265,8 +267,9 @@ void MAC::receive()// Receive 144 bit, 18 byte, 4 byte + 14 byte payload ?
             if (receive_buffer.size() > MAX_BUFFER_SIZE) continue;
             receive_buffer.add(frame);
         }
+        std::this_thread::sleep_for(chrono::milliseconds(5));// Is it necessary?
     }
-    cout << "Exit MAC::receive thread\n";
+    cout << "(MAC) Exit MAC::receive thread\n";
 }
 
 /*

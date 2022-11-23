@@ -12,13 +12,16 @@ class datareceiver
 public:
 	datareceiver();
 	~datareceiver() {};
-	CriticalSection lock;
-	Array<Array<int8_t> > data;
 	void add13bytes(Array<int8_t> newdata);
 	Array<int8_t> get13bytes();
 	void pop13bytes();
+	void writeToFiles(std::string path, bool isSymbol);
 	Array<int8_t> zero13;
-	bool receiveAll();
+	bool isfinish();
+	bool isempty();
+private:
+	CriticalSection lock;
+	Array<Array<int8_t> > data;
 };
 
 #endif

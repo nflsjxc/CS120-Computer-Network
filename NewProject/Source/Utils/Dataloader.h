@@ -6,7 +6,6 @@
 #include <JuceHeader.h>
 #include <string>
 #include <fstream>
-using namespace std;
 using namespace juce;
 
 class dataloader

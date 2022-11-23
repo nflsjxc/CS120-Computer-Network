@@ -1,4 +1,5 @@
 #include "Datareceiver.h"
+#include <fstream>
 
 Array<int8_t> datareceiver::get13bytes()
 {
@@ -26,7 +27,7 @@ void datareceiver::add13bytes(Array<int8_t> newdata)
 	data.add(newdata);
 }
 
-bool datareceiver::receiveAll() {
+bool datareceiver::isfinish() {
 	// If a package received, it should end with 13 zeros.
 	const ScopedLock sl(lock);
 	int n = data.size() - 1;
@@ -39,4 +40,24 @@ bool datareceiver::receiveAll() {
 		}
 	}
 	return true;
+}
+
+bool datareceiver::isempty()
+{
+	const ScopedLock sl(lock);
+	return data.size() == 0;
+}
+
+void datareceiver::writeToFiles(std::string path, bool isSymbol) {
+	ofstream f(path);
+	if (!isSymbol) {
+		for (int i = 0; i < data.size(); ++i) {
+			for (int j = 0; j < data[0].size(); ++j) {
+				f << ((char)data[i][j]);
+			}
+		}
+	}
+	else {
+		f << "1";
+	}
 }

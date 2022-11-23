@@ -574,6 +574,9 @@
     <Filter Include="NewProject\Source\Utils">
       <UniqueIdentifier>{ba767e4c-dc01-47e2-849a-f3228f829854}</UniqueIdentifier>
     </Filter>
+    <Filter Include="NewProject\Source\IP">
+      <UniqueIdentifier>{acaaa492-cb1a-4797-a19b-c3a3e8e50b1e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\Source\Main.cpp">
@@ -2758,6 +2761,12 @@
       <Filter>NewProject\Source\Utils</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Source\Utils\Message_Listener.cpp">
+      <Filter>NewProject\Source\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\IP\comm.cpp">
+      <Filter>NewProject\Source\IP</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Utils\Msg_q.cpp">
       <Filter>NewProject\Source\Utils</Filter>
     </ClCompile>
   </ItemGroup>
@@ -5454,6 +5463,12 @@
       <Filter>NewProject\Source\Utils</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Source\Utils\Message_Listener.h">
+      <Filter>NewProject\Source\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\IP\comm.h">
+      <Filter>NewProject\Source\IP</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Utils\Msg_q.h">
       <Filter>NewProject\Source\Utils</Filter>
     </ClInclude>
   </ItemGroup>

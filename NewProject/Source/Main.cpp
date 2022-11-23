@@ -14,6 +14,7 @@
 #include "MAC.h"
 #include <filesystem>
 #include "Message_Listener.h"
+#include "comm.h"
 using namespace juce;
 using namespace std;
 
@@ -80,8 +81,8 @@ void mac_init(MAC* test)
     test->main_thread();
 }
 
-//==============================================================================
-int main (int argc, char* argv[])
+/*
+void tsk2()
 {
     //ios::sync_with_stdio(0);
 
@@ -94,7 +95,9 @@ int main (int argc, char* argv[])
     dev_manager.setAudioDeviceSetup(dev_info, false);
 
     string datap = R"(C:\Users\Cabbage\Desktop\Network-debug\Data\input_t.txt)";
-    string okp= R"(C:\Users\Cabbage\Desktop\Network-debug\Data\ok.txt)";
+    string okp = R"(C:\Users\Cabbage\Desktop\Network-debug\Data\ok.txt)";
+    string outp = R"(C:\Users\Cabbage\Desktop\Network-debug\Data\Output1.txt)";
+    string outpOkp = R"(C:\Users\Cabbage\Desktop\Network-debug\Data\OutputOk.txt)";
     //filesystem::path datapath(datap);
     //dataloader load(datapath.string());
 
@@ -104,18 +107,17 @@ int main (int argc, char* argv[])
 
     dataloader datal;
     datareceiver datar;
-    cout << datal.isempty() << '\n';
     Message_Listener msgl(&datal);
-    msgl.addData(okp, datap);
+    //msgl.addData(okp, datap);
+    //msgl.addEndRequest();
     MAC test(&dev_manager);
     test.dl = &datal; test.dr = &datar;
-    cout << test.dl->isempty() << '\n';
     thread mac_thread(mac_init, &test);
     for (;;)
     {
 
-        this_thread::sleep_for(chrono::milliseconds(50));
-        msgl.addIcmpRequest();
+        //this_thread::sleep_for(chrono::milliseconds(50));
+        //msgl.addIcmpRequest();
         //cout << datal.isfinish() << '\n';
         if (datal.isfinish())
         {
@@ -123,7 +125,7 @@ int main (int argc, char* argv[])
             test.update_status(1);
             break;
         }
-        if (datar.receiveAll())
+        if (datar.isfinish())
         {
             this_thread::sleep_for(chrono::milliseconds(20));
             test.update_status(1);
@@ -140,15 +142,18 @@ int main (int argc, char* argv[])
         }
         cout << '\n';
     }
-    
+
+    datar.writeToFiles(outp, false);
+    datar.writeToFiles(outpOkp, true);
+
 
     /*thread send_thread(&send, &dev_manager);
     thread receive_thread(&receive, &dev_manager);
-    
+
 
     send_thread.join();
-    receive_thread.join();*/
-    
+    receive_thread.join();
+
     //Array<int8_t> datatmp;
     //for (int i = 0; i < 13; i++)
     //{
@@ -159,5 +164,56 @@ int main (int argc, char* argv[])
 
     DeletedAtShutdown::deleteAll();
     juce::MessageManager::deleteInstance();
+}
+*/
+void tsk3(AudioDeviceManager* dev_manager, dataloader* datal, datareceiver* datar)
+{
+    cout << "(MAC) Athernet start\n";
+    MAC test(dev_manager);
+    test.dl = datal; test.dr = datar;
+    thread mac_thread(mac_init, &test);
+    for (;;)
+    {
+        /*if (datal->isfinish())
+        {
+            this_thread::sleep_for(chrono::milliseconds(20));
+            test.update_status(1);
+            break;
+        }
+        if (datar->isfinish())
+        {
+            this_thread::sleep_for(chrono::milliseconds(20));
+            test.update_status(1);
+            break;
+        }*/
+    }
+    mac_thread.join();
+}
+
+//==============================================================================
+int main (int argc, char* argv[])
+{
+    AudioDeviceManager dev_manager;
+    dev_manager.initialiseWithDefaultDevices(1, 1);
+    AudioDeviceManager::AudioDeviceSetup dev_info;
+    dev_info = dev_manager.getAudioDeviceSetup();
+    dev_info.sampleRate = 48000; // Setup sample rate to 48000 Hz
+    dev_info.bufferSize = 512;
+    dev_manager.setAudioDeviceSetup(dev_info, false);
+
+    dataloader datal;
+    datareceiver datar;
+
+    //myserver_test();
+    thread comm_thread_in(myserver,&datal);
+    thread comm_thread_out(myclient, &datar);
+    thread mac_thread(tsk3,&dev_manager,&datal,&datar);
+
+    mac_thread.join();
+    comm_thread_in.join();
+    comm_thread_out.join();
+
+    //DeletedAtShutdown::deleteAll();
+    //juce::MessageManager::deleteInstance();
     return 0;
 }

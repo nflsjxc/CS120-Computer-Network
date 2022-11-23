@@ -6,6 +6,7 @@
 #include "Datareceiver.h"
 #include <JuceHeader.h>
 #include "Dataloader.h"
+#include <map>
 
 class Message_Listener {
 public:
@@ -22,6 +23,7 @@ public:
 private:
 	dataloader* Dataloader;
 	juce::Array<int8_t> allData;
+	std::map<std::string, int> visPath;
 };
 
 
